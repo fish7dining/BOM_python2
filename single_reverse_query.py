@@ -16,8 +16,8 @@ SHEET.write(0,2,r'product code')
 NUM = 0
 
 
-fatherCode = raw_input()
-a = some_functions.return_Table_Column_Value('material', 'code', fatherCode)
+sonCode = raw_input()
+a = some_functions.return_Table_Column_Value('material', 'code', sonCode)
 if len(a)!=0:
     Id = a[0][0]
     a = some_functions.return_Table_Column_Value('relation', 'son',str(Id))

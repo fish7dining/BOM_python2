@@ -1,41 +1,43 @@
 #!/usr/bin/env python
 
-import sqlite3
 import some_functions
 import xlwt
+import os
 
-EXCEL = xlwt.Workbook()
-SHEET = EXCEL.add_sheet('single_reverse_query', cell_overwrite_ok=True)
 
-SHEET.write(0,0,r'father')
-SHEET.write(0,1,r'need amount')
-SHEET.write(0,2,r'product code')
-NUM = 0
 
-def go(sonCode):
-    global NUM
-    a = some_functions.return_Table_Column_Value('material', 'code', sonCode)
-    if len(a)!=0:
-        Id = a[0][0]
-        a = some_functions.return_Table_Column_Value('relation', 'son',str(Id))
+class SingleReverseQuery():
+    def __init__(self):
+        self.EXCEL = xlwt.Workbook()
+        self.SHEET = self.EXCEL.add_sheet('single_reverse_query', cell_overwrite_ok=False)
+
+        self.SHEET.write(0,0,r'father')
+        self.SHEET.write(0,1,r'need amount')
+        self.SHEET.write(0,2,r'product code')
+        self.NUM = 0
+
+    def go(self, sonCode):
+        a = some_functions.return_Table_Column_Value('material', 'code', sonCode)
         if len(a)!=0:
-            CodeMap = {}
-            for i in a:
-                Id2 = i[1]
-                NUM += 1
-                if Id2 in CodeMap:
-                    SHEET.write(NUM, 0, CodeMap[Id2])
-                else:
-                    temp1 = some_functions.return_Table_Column_Value('material', 'id', str(Id2))
-                    SHEET.write(NUM, 0, temp1[0][1])
-                    SHEET.write(NUM, 1, i[3])
-                    CodeMap[Id2] = temp1[0][1];
-            EXCEL.save(r'/home/valseek/PycharmProjects/bom/single_reverse_query.xls')
-            print 'done'
+            sonId = a[0][0]
+            a = some_functions.return_Table_Column_Value('relation', 'son',str(sonId))
+            if len(a)!=0:
+                for i in a:
+                    fatherId = i[1]
+                    self.NUM += 1
+                    temp1 = some_functions.return_Table_Column_Value('material', 'id', str(fatherId))
+                    self.SHEET.write(self.NUM, 0, temp1[0][1])
+                    self.SHEET.write(self.NUM, 1, i[3])
+                    temp2 = some_functions.return_Table_Column_Value('material', 'id', str(i[4]))
+                    self.SHEET.write(self.NUM, 2, temp2[0][1])
+
+                currentDIR = os.path.dirname(os.path.realpath(__file__))
+                self.EXCEL.save(os.path.join(currentDIR, "single_reverse_query.xls"))
+                print 'done'
+            else:
+                print 'this material has no direct father!'
         else:
-            print 'this material has no direct father!'
-    else:
-        print 'no such material code!'
+            print 'no such material code!'
 
 
 

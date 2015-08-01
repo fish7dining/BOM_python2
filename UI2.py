@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog.ui'
 #
-# Created: Fri Jul 31 21:32:59 2015
+# Created: Sat Aug  1 19:05:12 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,18 +33,18 @@ class Ui_Dialog(object):
         self.label_2 = QtGui.QLabel(Dialog)
         self.label_2.setGeometry(QtCore.QRect(270, 40, 111, 17))
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.textEdit = QtGui.QTextEdit(Dialog)
-        self.textEdit.setGeometry(QtCore.QRect(20, 70, 181, 31))
-        self.textEdit.setObjectName(_fromUtf8("textEdit"))
-        self.textEdit_2 = QtGui.QTextEdit(Dialog)
-        self.textEdit_2.setGeometry(QtCore.QRect(230, 70, 181, 31))
-        self.textEdit_2.setObjectName(_fromUtf8("textEdit_2"))
         self.pushButton = QtGui.QPushButton(Dialog)
         self.pushButton.setGeometry(QtCore.QRect(100, 120, 99, 27))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.pushButton_2 = QtGui.QPushButton(Dialog)
         self.pushButton_2.setGeometry(QtCore.QRect(210, 120, 99, 27))
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.lineEdit = QtGui.QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QtCore.QRect(20, 70, 181, 27))
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.lineEdit_2 = QtGui.QLineEdit(Dialog)
+        self.lineEdit_2.setGeometry(QtCore.QRect(230, 70, 181, 27))
+        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

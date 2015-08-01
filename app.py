@@ -8,7 +8,7 @@ from UI import Ui_MainWindow
 from UI2 import Ui_Dialog
 from UI3 import Ui_Dialog2
 import sqlite3
-import single_query, multi_query, single_reverse_query, multi_reverse_query
+import single_query, multi_query, single_reverse_query, multi_reverse_query, end_reverse_query
 import os
 
 
@@ -25,8 +25,8 @@ class second(QtGui.QDialog):
         self.CU = self.CX.cursor()
 
     def add(self):
-        code = self.ui.textEdit.toPlainText()
-        name = self.ui.textEdit_2.toPlainText()
+        code = self.ui.lineEdit.text()
+        name = self.ui.lineEdit_2.text()
         self.CU.execute("select * from material where code = '"+str(code)+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
@@ -163,73 +163,72 @@ class first(QtGui.QMainWindow):
         self.update_tree()
 
 
-
-
         QtCore.QObject.connect(self.ui.pushButton_2, QtCore.SIGNAL("clicked()"), self.deleteMaterial)
         QtCore.QObject.connect(self.ui.pushButton_4, QtCore.SIGNAL("clicked()"), self.deleteRelation)
         QtCore.QObject.connect(self.ui.pushButton, QtCore.SIGNAL("clicked()"), self.addMaterial)
         QtCore.QObject.connect(self.ui.pushButton_3, QtCore.SIGNAL("clicked()"), self.addRelation)
 
-        '''
         QtCore.QObject.connect(self.ui.pushButton_5, QtCore.SIGNAL("clicked()"), self.singleQuery)
         QtCore.QObject.connect(self.ui.pushButton_6, QtCore.SIGNAL("clicked()"), self.multiQuery)
         QtCore.QObject.connect(self.ui.pushButton_7, QtCore.SIGNAL("clicked()"), self.singleReverseQuery)
         QtCore.QObject.connect(self.ui.pushButton_8, QtCore.SIGNAL("clicked()"), self.multiReverseQuery)
-        #QtCore.QObject.connect(self.ui.pushButton_9, QtCore.SIGNAL("clicked()"), self.deleteRelation)
-        '''
-    '''
+        QtCore.QObject.connect(self.ui.pushButton_9, QtCore.SIGNAL("clicked()"), self.endReverseQuery)
+
+
     def singleQuery(self):
         code = str(self.ui.lineEdit.text())
-        CX = sqlite3.connect("data.db")
-        CU = CX.cursor()
-        CU.execute("select * from material where code = '"+code+"'")
-        ans = CU.fetchall()
+        self.CU.execute("select * from material where code = '"+code+"'")
+        ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            single_query.go(code)
-            print 'single query done.'
+            single_query.SingleQuery().go(code)
+            QMessageBox.warning(self, "single query", 'EXCEL generated successfully')
         else:
-            reply = QMessageBox.warning(self, "single query", 'Please select an existed material code!')
+            QMessageBox.warning(self, "single query", 'Please select an existed material code!')
 
 
     def multiQuery(self):
         code = str(self.ui.lineEdit.text())
-        CX = sqlite3.connect("data.db")
-        CU = CX.cursor()
-        CU.execute("select * from material where code = '"+code+"'")
-        ans = CU.fetchall()
+        self.CU.execute("select * from material where code = '"+code+"'")
+        ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            multi_query.go(code)
-            print 'multi query done.'
+            multi_query.MultiQuery().go(code)
+            QMessageBox.warning(self, "multi query", 'EXCEL generated successfully')
         else:
-            reply = QMessageBox.warning(self, "multi query", 'Please select an existed material code!')
+            QMessageBox.warning(self, "multi query", 'Please select an existed material code!')
 
 
     def singleReverseQuery(self):
         code = str(self.ui.lineEdit.text())
-        CX = sqlite3.connect("data.db")
-        CU = CX.cursor()
-        CU.execute("select * from material where code = '"+code+"'")
-        ans = CU.fetchall()
+        self.CU.execute("select * from material where code = '"+code+"'")
+        ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            single_reverse_query.go(code)
-            print 'single reverse query done.'
+            single_reverse_query.SingleReverseQuery().go(code)
+            QMessageBox.warning(self, "single reverse query", 'EXCEL generated successfully')
         else:
-            reply = QMessageBox.warning(self, "single reverse query", 'Please select an existed material code!')
+            QMessageBox.warning(self, "single reverse query", 'Please select an existed material code!')
 
 
     def multiReverseQuery(self):
         code = str(self.ui.lineEdit.text())
-        CX = sqlite3.connect("data.db")
-        CU = CX.cursor()
-        CU.execute("select * from material where code = '"+code+"'")
-        ans = CU.fetchall()
+        self.CU.execute("select * from material where code = '"+code+"'")
+        ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            multi_reverse_query.go(code)
-            print 'multi reverse query done.'
+            multi_reverse_query.MultiReverseQuery().go(code)
+            QMessageBox.warning(self, "multi reverse query", 'EXCEL generated successfully')
         else:
-            reply = QMessageBox.warning(self, "multi reverse query", 'Please select an existed material code!')
+            QMessageBox.warning(self, "multi reverse query", 'Please select an existed material code!')
 
-    '''
+
+    def endReverseQuery(self):
+        code = str(self.ui.lineEdit.text())
+        self.CU.execute("select * from material where code = '"+code+"'")
+        ans = self.CU.fetchmany(1)
+        if len(ans) > 0:
+            end_reverse_query.EndReverseQuery().go(code)
+            QMessageBox.warning(self, "end reverse query", 'EXCEL generated successfully')
+        else:
+            QMessageBox.warning(self, "end reverse query", 'Please select an existed material code!')
+
 
     def addMaterial(self):
         self.add1 = second()
@@ -262,15 +261,19 @@ class first(QtGui.QMainWindow):
         if len(selections) > 0:
             ratio = str(selections[0].text(1))
             if ratio != '':
-                parent = selections[0].parent()
-                fatherID = self.MATERIAL_code_id[str(parent.text(0))]
-                sonID = self.MATERIAL_code_id[str(selections[0].text(0))]
-                productID = self.MATERIAL_code_id[str(selections[0].text(2))]
-                self.CU.execute("delete from relation where father = '"+str(fatherID)+"' and son = '"+str(sonID)+\
-                                "' and productID = '"+str(productID)+"'")
-                self.CX.commit()
-                self.update_memory()
-                self.update_tree()
+                reply = QMessageBox.question(self, "TABLE relation", "Are you sure to delete?", QMessageBox.Yes|QMessageBox.No)
+                if reply==QMessageBox.Yes:
+                    parent = selections[0].parent()
+                    fatherID = self.MATERIAL_code_id[str(parent.text(0))]
+                    sonID = self.MATERIAL_code_id[str(selections[0].text(0))]
+                    productID = self.MATERIAL_code_id[str(selections[0].text(2))]
+                    self.CU.execute("delete from relation where father = '"+str(fatherID)+"' and son = '"+str(sonID)+\
+                                    "' and productID = '"+str(productID)+"'")
+                    self.CX.commit()
+                    self.update_memory()
+                    self.update_tree()
+            else:
+                QMessageBox.warning(self, "ERROR", 'Please delete its children!')
 
 
 

@@ -23,6 +23,4 @@ def return_Table_Column_Value(TableName, ColumnName, Values):
     CU.execute("select * from "+TableName+" where "+ColumnName+" = '"+Values+"'")
     ans = CU.fetchall()
 
-    CU.close()
-    CX.close()
     return ans

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sat Aug  1 18:48:53 2015
+# Created: Sat Aug  1 19:05:25 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -86,7 +86,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "BOM", None))
         self.pushButton.setText(_translate("MainWindow", "add", None))
         self.pushButton_2.setText(_translate("MainWindow", "delete", None))
         self.pushButton_3.setText(_translate("MainWindow", "add", None))

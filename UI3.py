@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog2.ui'
 #
-# Created: Fri Jul 31 21:33:04 2015
+# Created: Sat Aug  1 19:05:17 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,10 +63,10 @@ class Ui_Dialog2(object):
 
     def retranslateUi(self, Dialog2):
         Dialog2.setWindowTitle(_translate("Dialog2", "Dialog", None))
-        self.label.setText(_translate("Dialog2", "father", None))
-        self.label_2.setText(_translate("Dialog2", "son", None))
-        self.label_3.setText(_translate("Dialog2", "ratio ( father : son )", None))
-        self.label_4.setText(_translate("Dialog2", "product Code", None))
+        self.label.setText(_translate("Dialog2", "Father", None))
+        self.label_2.setText(_translate("Dialog2", "Son", None))
+        self.label_3.setText(_translate("Dialog2", "Ratio ( Father : Son )", None))
+        self.label_4.setText(_translate("Dialog2", "Product Code", None))
         self.pushButton.setText(_translate("Dialog2", "Cancel", None))
         self.pushButton_2.setText(_translate("Dialog2", "Yes", None))
 

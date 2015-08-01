@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QMessageBox, QTreeWidgetItem
+from PyQt4.QtGui import QMessageBox, QTreeWidgetItem, QDesktopWidget
 from PyQt4.QtSql import QSqlDatabase, QSqlTableModel
 from UI import Ui_MainWindow
 from UI2 import Ui_Dialog
@@ -132,12 +132,18 @@ class first(QtGui.QMainWindow):
                 self.tree2Item[key].setText(1, str(ratio))
                 self.tree2Item[key].setText(2, productCode)
 
-
+    def MoveToScreenCenter(self):
+        screen = QDesktopWidget().screenGeometry()
+        mysize = self.geometry()
+        hpos = ( screen.width() - mysize.width() ) / 2
+        vpos = ( screen.height() - mysize.height() ) / 2
+        self.move(hpos, vpos)
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.MoveToScreenCenter()
 
         #-stable---------------------------------------------------------------------------
         self.currentDIR = os.path.dirname(os.path.realpath(__file__))

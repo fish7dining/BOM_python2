@@ -11,7 +11,7 @@ CU = CX.cursor()
 
 
 CX.execute("create table material (id integer primary key, code varchar(20) UNIQUE, name varchar(20))")
-CX.execute("create table relation (id integer primary key, father integer, son integer, ratio integer, product_code varchar(20))")
+CX.execute("create table relation (id integer primary key, father integer, son integer, ratio integer, productID integer)")
 
 
 material = [(1,'A_1','computer'),
@@ -32,37 +32,35 @@ material = [(1,'A_1','computer'),
             (16,'A_1_5_3_2','he3'),
             (17,'A_1_5_3_2_1','t1'),
             ]
-relation = [(1,1,2,1,'A_1'),
-            (2,1,3,1,'A_1'),
-            (3,1,4,1,'A_1'),
-            (4,1,5,1,'A_1'),
-            (5,1,6,1,'A_1'),
-            (6,1,7,1,'A_1'),
-            (7,1,8,1,'A_1'),
-            (8,1,9,1,'A_1'),
-            (9,1,10,1,'A_1'),
+relation = [(1,1,2,1,1),
+            (2,1,3,1,1),
+            (3,1,4,1,1),
+            (4,1,5,1,1),
+            (5,1,6,1,1),
+            (6,1,7,1,1),
+            (7,1,8,1,1),
+            (8,1,9,1,1),
+            (9,1,10,1,1),
 
-            (10,6,11,2,'A_1'),
-            (11,6,12,3,'A_1'),
-            (12,6,13,1,'A_1'),
-            (13,12,14,4,'A_1'),
-            (14,13,15,1,'A_1'),
-            (15,13,16,2,'A_1'),
-            (16,16,17,6,'A_1'),
+            (10,6,11,2,1),
+            (11,6,12,3,1),
+            (12,6,13,1,1),
+            (13,12,14,4,1),
+            (14,13,15,1,1),
+            (15,13,16,2,1),
+            (16,16,17,6,1),
             ]
 
-#CX.execute("delete from material")
-#CX.execute("delete from relation")
+CX.execute("delete from material")
+CX.execute("delete from relation")
 
 for t in material:
     CX.execute("insert into material values (?,?,?)",t)
 CX.commit()
 
-
 for t in relation:
     CX.execute("insert into relation values(?,?,?,?,?)",t)
 CX.commit()
-
 
 
 some_functions.printTable('material')

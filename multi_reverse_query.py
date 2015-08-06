@@ -19,13 +19,13 @@ class MultiReverseQuery():
         self.MAX_IND = max( self.MAX_IND, IND )
         direct_father = some_functions.return_Table_Column_Value('relation', 'son', str(ID))
         if len(direct_father)==0:
-            return -1;
+            return -1
         t = 0
         for i in direct_father:
-            father_name = some_functions.return_Table_Column_Value('material', 'id', str(i[1]))[0][1]
+            father_Code = some_functions.return_Table_Column_Value('material', 'id', str(i[1]))[0][1]
             t = self.gogo(IND+1, needNum*i[3], i[1])+1
             self.NUM += 1
-            self.SHEET.write(self.NUM, t, father_name)
+            self.SHEET.write(self.NUM, t, father_Code)
             self.NUMArray.append(needNum*i[3])
             temp1 = some_functions.return_Table_Column_Value('material', 'id', str(i[4]))
             self.productCodeArray.append(temp1[0][1])
@@ -43,7 +43,6 @@ class MultiReverseQuery():
             self.SHEET.write(0,0,r'ancestors')
             self.SHEET.write(0,self.MAX_IND,r'needed amount')
             self.SHEET.write(0,self.MAX_IND+1,r'product code')
-
             currentDIR = os.path.dirname(os.path.realpath(__file__))
             self.EXCEL.save(os.path.join(currentDIR, "multi_reverse_query.xls"))
             print 'done'

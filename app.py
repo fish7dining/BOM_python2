@@ -10,6 +10,7 @@ from UI3 import Ui_Dialog2
 import sqlite3
 import single_query, multi_query, single_reverse_query, multi_reverse_query, end_reverse_query
 import os
+import some_functions
 
 
 
@@ -27,12 +28,13 @@ class second(QtGui.QDialog):
     def add(self):
         code = self.ui.lineEdit.text()
         name = self.ui.lineEdit_2.text()
+        isProduct = self.ui.checkBox.isChecked()
         self.CU.execute("select * from material where code = '"+str(code)+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
             QMessageBox.warning(self, "Wrong", 'Code Name has already exist!')
         else:
-            self.CU.execute("insert into material values(?,?,?)",(None, str(code), str(name)))
+            self.CU.execute("insert into material values(?,?,?,?)",(None, str(code), str(name), isProduct))
             self.CX.commit()
             myapp.update_memory()
             myapp.update_tree()
@@ -58,18 +60,17 @@ class third(QtGui.QDialog):
         for i in myapp.MATERIAL:
             self.ui.comboBox.addItem(str(i[1]))
             self.ui.comboBox_2.addItem(str(i[1]))
-            self.ui.comboBox_3.addItem(str(i[1]))
+
     def add(self):
         if self.ui.lineEdit.text() != '':
             fatherID = myapp.MATERIAL_code_id[str(self.ui.comboBox.currentText())]
             sonID = myapp.MATERIAL_code_id[str(self.ui.comboBox_2.currentText())]
-            productID = myapp.MATERIAL_code_id[str(self.ui.comboBox_3.currentText())]
             ratios = int(self.ui.lineEdit.text())
             self.CU.execute("select * from relation where father = '"+str(fatherID)+ \
-                       "' and son = '"+str(sonID)+"' and productID = '"+str(productID)+"'")
+                       "' and son = '"+str(sonID)+"'")
             ans = self.CU.fetchmany(1)
             if len(ans)==0:
-                self.CU.execute("insert into relation values(?,?,?,?,?)",(None, fatherID, sonID, ratios, productID))
+                self.CU.execute("insert into relation values(?,?,?,?)",(None, fatherID, sonID, ratios))
                 self.CX.commit()
                 myapp.update_memory()
                 myapp.update_tree()
@@ -91,15 +92,17 @@ class first(QtGui.QMainWindow):
     #update map [database -> memory]
     def update_memory(self):
         self.CU.execute("select * from material")
-        self.MATERIAL = self.CU.fetchmany(50)
+        self.MATERIAL = self.CU.fetchall()
         self.MATERIAL_id_code = {}
         self.MATERIAL_code_id = {}
+        self.PRODUCT = []
         for i in self.MATERIAL:
             self.MATERIAL_id_code[i[0]] = str(i[1])
             self.MATERIAL_code_id[str(i[1])] = i[0]
-
+            if i[3]==True:
+                self.PRODUCT.append(i[1])
         self.CU.execute("select * from relation")
-        self.RELATION = self.CU.fetchmany(50)
+        self.RELATION = self.CU.fetchall()
 
     #update treeWdigets
     def update_tree(self):
@@ -109,28 +112,27 @@ class first(QtGui.QMainWindow):
         self.tree2Item = {}
         for i in self.MATERIAL:
             self.tree1Item.append(QTreeWidgetItem(self.tree1))
-            self.tree1Item[len(self.tree1Item)-1].setText(0, str(i[1]))
-            self.tree1Item[len(self.tree1Item)-1].setText(1, str(i[2]))
+            self.tree1Item[-1].setText(0, str(i[1]))
+            self.tree1Item[-1].setText(1, str(i[2]))
+            if i[3]==1:
+                self.tree1Item[-1].setText(2, 'True')
         for i in self.RELATION:
-            ID = i[0]
             fatherID = i[1]
             fatherCode = self.MATERIAL_id_code[fatherID]
             sonID = i[2]
             sonCode = self.MATERIAL_id_code[sonID]
             ratio = i[3]
-            productID = i[4]
-            productCode = self.MATERIAL_id_code[productID]
 
             if fatherID not in self.tree2Item:
                 self.tree2Item[fatherID] = QTreeWidgetItem(self.tree2)
                 self.tree2Item[fatherID].setText(0, fatherCode)
-                self.tree2Item[fatherID].setText(2, productCode)
-            key = (fatherID, sonID, productID)
+                if some_functions.return_Table_Column_Value('material', 'id', str(some_functions.code_to_id(fatherCode)))[0][3]==True:
+                    self.tree2Item[fatherID].setText(2, fatherCode)
+            key = (fatherID, sonID)
             if key not in self.tree2Item:
                 self.tree2Item[key] = QTreeWidgetItem(self.tree2Item[fatherID])
                 self.tree2Item[key].setText(0, sonCode)
                 self.tree2Item[key].setText(1, str(ratio))
-                self.tree2Item[key].setText(2, productCode)
 
     def MoveToScreenCenter(self):
         screen = QDesktopWidget().screenGeometry()
@@ -158,10 +160,10 @@ class first(QtGui.QMainWindow):
         self.CU = self.CX.cursor()
 
         self.tree1 = self.ui.treeWidget
-        self.tree1.setColumnCount(2)
-        self.tree1.setHeaderLabels(['Code','Name'])
+        self.tree1.setColumnCount(3)
+        self.tree1.setHeaderLabels(['Code','Name','IsProduct'])
         self.tree2 = self.ui.treeWidget_2
-        self.tree2.setColumnCount(3)
+        self.tree2.setColumnCount(2)
         self.tree2.setHeaderLabels(['Code', 'Ratio', 'Product'])
         #----------------------------------------------------------------------------
 
@@ -186,7 +188,8 @@ class first(QtGui.QMainWindow):
         self.CU.execute("select * from material where code = '"+code+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            single_query.SingleQuery().go(code)
+            single_query.SingleQuery().go(code, self.MATERIAL, self.RELATION, self.PRODUCT, \
+                                          self.MATERIAL_id_code, self.MATERIAL_code_id)
             QMessageBox.warning(self, "single query", 'EXCEL generated successfully')
         else:
             QMessageBox.warning(self, "single query", 'Please select an existed material code!')
@@ -197,7 +200,8 @@ class first(QtGui.QMainWindow):
         self.CU.execute("select * from material where code = '"+code+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            multi_query.MultiQuery().go(code)
+            multi_query.MultiQuery().go(code, self.MATERIAL, self.RELATION, self.PRODUCT, \
+                                        self.MATERIAL_id_code, self.MATERIAL_code_id)
             QMessageBox.warning(self, "multi query", 'EXCEL generated successfully')
         else:
             QMessageBox.warning(self, "multi query", 'Please select an existed material code!')
@@ -208,7 +212,8 @@ class first(QtGui.QMainWindow):
         self.CU.execute("select * from material where code = '"+code+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            single_reverse_query.SingleReverseQuery().go(code)
+            single_reverse_query.SingleReverseQuery().go(code, self.MATERIAL, self.RELATION, self.PRODUCT, \
+                                                         self.MATERIAL_id_code, self.MATERIAL_code_id)
             QMessageBox.warning(self, "single reverse query", 'EXCEL generated successfully')
         else:
             QMessageBox.warning(self, "single reverse query", 'Please select an existed material code!')
@@ -219,7 +224,8 @@ class first(QtGui.QMainWindow):
         self.CU.execute("select * from material where code = '"+code+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            multi_reverse_query.MultiReverseQuery().go(code)
+            multi_reverse_query.MultiReverseQuery().go(code, self.MATERIAL, self.RELATION, self.PRODUCT, \
+                                                       self.MATERIAL_id_code, self.MATERIAL_code_id)
             QMessageBox.warning(self, "multi reverse query", 'EXCEL generated successfully')
         else:
             QMessageBox.warning(self, "multi reverse query", 'Please select an existed material code!')
@@ -230,19 +236,20 @@ class first(QtGui.QMainWindow):
         self.CU.execute("select * from material where code = '"+code+"'")
         ans = self.CU.fetchmany(1)
         if len(ans) > 0:
-            end_reverse_query.EndReverseQuery().go(code)
+            end_reverse_query.EndReverseQuery().go(code, self.MATERIAL, self.RELATION, self.PRODUCT, \
+                                                   self.MATERIAL_id_code, self.MATERIAL_code_id)
             QMessageBox.warning(self, "end reverse query", 'EXCEL generated successfully')
         else:
             QMessageBox.warning(self, "end reverse query", 'Please select an existed material code!')
 
 
     def addMaterial(self):
-        self.add1 = second()
-        self.add1.exec_()
+        add1 = second()
+        add1.exec_()
 
     def addRelation(self):
-        self.add2 = third()
-        self.add2.exec_()
+        add2 = third()
+        add2.exec_()
 
     def deleteMaterial(self):
         selections = self.tree1.selectedItems()
@@ -272,9 +279,7 @@ class first(QtGui.QMainWindow):
                     parent = selections[0].parent()
                     fatherID = self.MATERIAL_code_id[str(parent.text(0))]
                     sonID = self.MATERIAL_code_id[str(selections[0].text(0))]
-                    productID = self.MATERIAL_code_id[str(selections[0].text(2))]
-                    self.CU.execute("delete from relation where father = '"+str(fatherID)+"' and son = '"+str(sonID)+\
-                                    "' and productID = '"+str(productID)+"'")
+                    self.CU.execute("delete from relation where father = '"+str(fatherID)+"' and son = '"+str(sonID)+"'")
                     self.CX.commit()
                     self.update_memory()
                     self.update_tree()

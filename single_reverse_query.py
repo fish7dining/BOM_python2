@@ -16,10 +16,9 @@ class SingleReverseQuery():
         self.SHEET.write(0,2,r'product code')
         self.NUM = 0
 
-    def go(self, sonCode):
-        a = some_functions.return_Table_Column_Value('material', 'code', sonCode)
-        if len(a)!=0:
-            sonId = a[0][0]
+    def go(self, sonCode, material, relation, product, IdToCode, CodeToId):
+        if sonCode in CodeToId:
+            sonId = CodeToId[sonCode]
             a = some_functions.return_Table_Column_Value('relation', 'son',str(sonId))
             if len(a)!=0:
                 for i in a:
@@ -28,8 +27,12 @@ class SingleReverseQuery():
                     temp1 = some_functions.return_Table_Column_Value('material', 'id', str(fatherId))
                     self.SHEET.write(self.NUM, 0, temp1[0][1])
                     self.SHEET.write(self.NUM, 1, i[3])
-                    temp2 = some_functions.return_Table_Column_Value('material', 'id', str(i[4]))
-                    self.SHEET.write(self.NUM, 2, temp2[0][1])
+                    products = some_functions.findAllProduct(IdToCode[fatherId])
+                    WE = ''
+                    for i in products:
+                        WE += '; '+i
+                    WE = WE[2:]
+                    self.SHEET.write(self.NUM, 2, WE)
 
                 currentDIR = os.path.dirname(os.path.realpath(__file__))
                 self.EXCEL.save(os.path.join(currentDIR, "single_reverse_query.xls"))

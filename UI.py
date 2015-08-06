@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sat Aug  1 19:05:25 2015
+# Created: Thu Aug  6 10:57:42 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,11 +63,11 @@ class Ui_MainWindow(object):
         self.label.setGeometry(QtCore.QRect(780, 20, 161, 17))
         self.label.setObjectName(_fromUtf8("label"))
         self.treeWidget = QtGui.QTreeWidget(self.centralWidget)
-        self.treeWidget.setGeometry(QtCore.QRect(40, 10, 256, 371))
+        self.treeWidget.setGeometry(QtCore.QRect(40, 10, 331, 371))
         self.treeWidget.setObjectName(_fromUtf8("treeWidget"))
         self.treeWidget.headerItem().setText(0, _fromUtf8("1"))
         self.treeWidget_2 = QtGui.QTreeWidget(self.centralWidget)
-        self.treeWidget_2.setGeometry(QtCore.QRect(330, 10, 411, 371))
+        self.treeWidget_2.setGeometry(QtCore.QRect(400, 10, 341, 371))
         self.treeWidget_2.setObjectName(_fromUtf8("treeWidget_2"))
         self.treeWidget_2.headerItem().setText(0, _fromUtf8("1"))
         MainWindow.setCentralWidget(self.centralWidget)

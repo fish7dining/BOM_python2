@@ -1,27 +1,14 @@
 
 
-class b:
-    def __do__(self, ans):
-        ans.pop()
 
-class a:
-    def __init__(self):
-        self.ans = []
+def func(a, b):
+    if a < b:
+        return 1
+    else:
+        return -1
 
-    def add(self, x):
-        self.ans.append(x)
-
-    def delete(self):
-        print self.ans
-        tt = b()
-        tt.__do__(self.ans)
-        print self.ans
-
-
-tt = a()
-tt.add(1)
-tt.add(2)
-tt.add(3)
-tt.delete()
+a = [5,3,6,1,7]
+a.sort(cmp=func)
+print a
 
 
